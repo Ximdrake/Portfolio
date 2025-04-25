@@ -7,6 +7,14 @@
     <link rel="stylesheet" href="css/style.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- EmailJS SDK - Load directly in the head -->
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        (function() {
+            // Initialize EmailJS with your user ID
+            emailjs.init("-Q4vJ5ejrFVj1Hp-w");
+        })();
+    </script>
 </head>
 <body>
     <header>
@@ -34,7 +42,7 @@
             <div class="hero-content">
                 <div class="hero-text">
                     <h1>Ximdrake Asidor</h1>
-                    <h2></h2>
+                    <h2>Web Developer & Video Editor</h2>
                     <p>Crafting digital experiences with code and creativity</p>
                     <div class="hero-buttons">
                         <a href="#contact" class="btn primary-btn">Get in Touch</a>
@@ -55,7 +63,7 @@
             <h2 class="section-title">About Me</h2>
             <div class="about-content">
                 <div class="about-text">
-                    <p>Hello! I'm Ximdrake Asidor, a passionate web developer with 6 years of experience and a video editor with 2 years of expertise. I also work as a cameraman/video editor for </p> <p><a style="color: brown;"href="https://www.youtube.com/@theasidors">The Asidors Singers</a>.</p>
+                    <p>Hello! I'm Ximdrake Asidor, a passionate web developer with 6 years of experience and a video editor with 2 years of expertise. I also work as a cameraman/video editor for <a style="color: brown;" href="https://www.youtube.com/@theasidors">The Asidors Singers</a>.</p>
                     <p>At 28 years old, I hold a Bachelor's degree in Information Technology and have developed a diverse skill set in programming languages and multimedia tools.</p>
                     <p>My goal is to create elegant, functional digital solutions that make a positive impact. I believe in the power of clean code and creative design to transform ideas into reality.</p>
                     <div class="personal-info">
@@ -203,7 +211,7 @@
                     </div>
                 </div>
                 <div class="timeline-item">
-                    <div class="timeline-dot"></div>
+                <div class="timeline-dot"></div>
                     <div class="timeline-content">
                         <h3>Video Editor</h3>
                         <span class="date">2021 - Present</span>
@@ -265,10 +273,10 @@
                 <div class="contact-form">
                     <form id="contactForm">
                         <div class="form-group">
-                            <input type="text" id="name" name="name" placeholder="Your Name" required>
+                            <input type="text" id="name" name="from_name" placeholder="Your Name" required>
                         </div>
                         <div class="form-group">
-                            <input type="email" id="email" name="email" placeholder="Your Email" required>
+                            <input type="email" id="email" name="from_email" placeholder="Your Email" required>
                         </div>
                         <div class="form-group">
                             <input type="text" id="subject" name="subject" placeholder="Subject" required>
@@ -292,5 +300,24 @@
     </footer>
 
     <script src="js/script.js"></script>
+    <script type="text/javascript">
+        document.getElementById('contactForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+            
+            // Show loading state
+            const submitBtn = this.querySelector('button[type="submit"]');
+            const originalText = submitBtn.textContent;
+            submitBtn.textContent = 'Sending...';
+            submitBtn.disabled = true;
+            
+            // Send email using EmailJS
+            emailjs.sendForm('service_ximdrake', 'template_portfolio', this)
+                .then(function(response) {
+                    document.getElementById('contactForm').reset();
+                    submitBtn.textContent = originalText;
+                    submitBtn.disabled = false;
+                });
+        });
+    </script>
 </body>
 </html>

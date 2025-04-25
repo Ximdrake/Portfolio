@@ -109,10 +109,30 @@ document.addEventListener('DOMContentLoaded', function() {
         });
     });
 
-    // Contact form submission
+    // Contact form submission with EmailJS
     if (contactForm) {
+        // Initialize EmailJS with your user ID
+        (function() {
+            // Add EmailJS script to the document
+            const script = document.createElement('script');
+            script.type = 'text/javascript';
+            script.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js';
+            script.async = true;
+            document.head.appendChild(script);
+            
+            script.onload = function() {
+                emailjs.init("-Q4vJ5ejrFVj1Hp-w");
+            };
+        })();
+        
         contactForm.addEventListener('submit', function(e) {
             e.preventDefault();
+            
+            // Show loading state
+            const submitButton = contactForm.querySelector('button[type="submit"]');
+            const originalButtonText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Sending...';
             
             // Get form values
             const name = document.getElementById('name').value;
@@ -123,17 +143,45 @@ document.addEventListener('DOMContentLoaded', function() {
             // Simple validation
             if (!name || !email || !subject || !message) {
                 showFormMessage('Please fill in all fields', 'error');
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
                 return;
             }
             
-            // Here you would typically send the form data to a server
-            // For now, we'll just simulate a successful submission
+            // Method 1: Using form directly (more reliable)
+            emailjs.sendForm('service_e6w6iub', 'template_xhgn6q3', contactForm, '-Q4vJ5ejrFVj1Hp-w')
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showFormMessage('Your message has been sent successfully!', 'success');
+                    contactForm.reset();
+                    submitButton.disabled = false;
+                    submitButton.textContent = "Send Message";
+                });
+                
+            // Method 2: Using parameters object (backup method, commented out)
+            /*
+            const templateParams = {
+                from_name: name,
+                from_email: email,
+                subject: subject,
+                message: message,
+                to_name: 'Ximdrake Asidor'
+            };
             
-            // Show success message
-            showFormMessage('Your message has been sent successfully!', 'success');
-            
-            // Reset form
-            contactForm.reset();
+            emailjs.send('service_e6w6iub', 'template_xhgn6q3', templateParams, '-Q4vJ5ejrFVj1Hp-w')
+                .then(function(response) {
+                    console.log('SUCCESS!', response.status, response.text);
+                    showFormMessage('Your message has been sent successfully!', 'success');
+                    contactForm.reset();
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                }, function(error) {
+                    console.log('FAILED...', error);
+                    showFormMessage('Failed to send message. Please try again later.', 'error');
+                    submitButton.disabled = false;
+                    submitButton.textContent = originalButtonText;
+                });
+            */
         });
     }
 
@@ -227,6 +275,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         .dark-mode #darkModeToggle {
             color: var(--light-text-dark);
+        }
+        button:disabled {
+            opacity: 0.7;
+            cursor: not-allowed;
         }
     `;
     document.head.appendChild(style);
